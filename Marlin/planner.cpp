@@ -82,6 +82,10 @@ matrix_3x3 plan_bed_level_matrix = {
 	0.0, 1.0, 0.0,
 	0.0, 0.0, 1.0,
 };
+
+double plane_equation_a = 0;
+double plane_equation_b = 0;
+
 #endif // #ifdef ENABLE_AUTO_BED_LEVELING
 
 // The current position of the tool in absolute steps

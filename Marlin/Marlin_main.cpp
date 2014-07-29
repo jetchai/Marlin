@@ -1512,6 +1512,8 @@ void process_commands()
 
             // solve lsq problem
             double *plane_equation_coefficients = qr_solve(AUTO_BED_LEVELING_GRID_POINTS*AUTO_BED_LEVELING_GRID_POINTS, 3, eqnAMatrix, eqnBVector);
+            plane_equation_a = plane_equation_coefficients[0];
+            plane_equation_b = plane_equation_coefficients[1];
 
             SERIAL_PROTOCOLPGM("Eqn coefficients: a: ");
             SERIAL_PROTOCOL(plane_equation_coefficients[0]);
@@ -2693,6 +2695,12 @@ void process_commands()
     case 503: // M503 print settings currently in memory
     {
         Config_PrintSettings();
+    }
+    break;
+    case 504: // M504 generated plane bed matrix.
+    {
+        double coefficients[2] = {plane_equation_a, plane_equation_b};
+        set_bed_level_equation_lsq(coefficients);
     }
     break;
     #ifdef ABORT_ON_ENDSTOP_HIT_FEATURE_ENABLED

@@ -93,6 +93,8 @@ void Config_StoreSettings()
     int lcd_contrast = 32;
   #endif
   EEPROM_WRITE_VAR(i,lcd_contrast);
+  EEPROM_WRITE_VAR(i,plane_equation_a);
+  EEPROM_WRITE_VAR(i,plane_equation_b);
   char ver2[4]=EEPROM_VERSION;
   i=EEPROM_OFFSET;
   EEPROM_WRITE_VAR(i,ver2); // validate data
@@ -243,6 +245,8 @@ void Config_RetrieveSettings()
 
 		// Call updatePID (similar to when we have processed M301)
 		updatePID();
+        EEPROM_READ_VAR(i,plane_equation_a);
+        EEPROM_READ_VAR(i,plane_equation_b); 
         SERIAL_ECHO_START;
         SERIAL_ECHOLNPGM("Stored settings retrieved");
     }

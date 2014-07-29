@@ -74,6 +74,9 @@ typedef struct {
 #ifdef ENABLE_AUTO_BED_LEVELING
 // this holds the required transform to compensate for bed level
 extern matrix_3x3 plan_bed_level_matrix;
+extern double plane_equation_a;
+extern double plane_equation_b;
+
 #endif // #ifdef ENABLE_AUTO_BED_LEVELING
 
 // Initialize the motion plan subsystem      
