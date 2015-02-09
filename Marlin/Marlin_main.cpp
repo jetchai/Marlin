@@ -1399,7 +1399,7 @@ void process_commands()
       }
       #ifdef ENABLE_AUTO_BED_LEVELING
         if((home_all_axis) || (code_seen(axis_codes[Z_AXIS]))) {
-          current_position[Z_AXIS] += zprobe_zoffset;  //Add Z_Probe offset (the distance is negative)
+          current_position[Z_AXIS] = zprobe_zoffset;  //Add Z_Probe offset (the distance is negative)
         }
       #endif
       plan_set_position(current_position[X_AXIS], current_position[Y_AXIS], current_position[Z_AXIS], current_position[E_AXIS]);
@@ -2697,12 +2697,23 @@ void process_commands()
         Config_PrintSettings();
     }
     break;
+    #ifdef ENABLE_AUTO_BED_LEVELING
     case 504: // M504 generated plane bed matrix.
     {
         double coefficients[2] = {plane_equation_a, plane_equation_b};
         set_bed_level_equation_lsq(coefficients);
     }
     break;
+    case 505: // M505 adjust zprobe offset.
+    {
+        if(code_seen('Z')) {
+            zprobe_zoffset = -code_value(); 
+            SERIAL_ECHO_START;
+            SERIAL_ECHO("Z: ");
+            SERIAL_ECHOLN(zprobe_zoffset);
+        }
+    }
+    #endif
     #ifdef ABORT_ON_ENDSTOP_HIT_FEATURE_ENABLED
     case 540:
     {
