@@ -1403,6 +1403,11 @@ void process_commands()
         }
       #endif
       plan_set_position(current_position[X_AXIS], current_position[Y_AXIS], current_position[Z_AXIS], current_position[E_AXIS]);
+      
+      // raising extruder to prevent carelessly accident.
+      plan_buffer_line(current_position[X_AXIS], current_position[Y_AXIS], 0, current_position[E_AXIS], max_feedrate[Z_AXIS], active_extruder);
+      st_synchronize();
+      
 #endif // else DELTA
 
       #ifdef ENDSTOPS_ONLY_FOR_HOMING
