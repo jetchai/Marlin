@@ -860,7 +860,7 @@ static void set_bed_level_equation_lsq(double *plane_equation_coefficients)
     current_position[Z_AXIS] = corrected_position.z;
 
     // but the bed at 0 so we don't go below it.
-    current_position[Z_AXIS] = zprobe_zoffset; // in the lsq we reach here after raising the extruder due to the loop structure
+    //current_position[Z_AXIS] = zprobe_zoffset; // in the lsq we reach here after raising the extruder due to the loop structure
 
     plan_set_position(current_position[X_AXIS], current_position[Y_AXIS], current_position[Z_AXIS], current_position[E_AXIS]);
 }
@@ -1405,10 +1405,12 @@ void process_commands()
       plan_set_position(current_position[X_AXIS], current_position[Y_AXIS], current_position[Z_AXIS], current_position[E_AXIS]);
       
       // raising extruder to prevent carelessly accident.
-      current_position[Z_AXIS] = 0;
-      plan_buffer_line(current_position[X_AXIS], current_position[Y_AXIS], current_position[Z_AXIS], current_position[E_AXIS], max_feedrate[Z_AXIS], active_extruder);
-      st_synchronize();
-      plan_set_position(current_position[X_AXIS], current_position[Y_AXIS], current_position[Z_AXIS], current_position[E_AXIS]);
+      if((home_all_axis) || (code_seen(axis_codes[Z_AXIS]))) {
+        current_position[Z_AXIS] = 0;
+        plan_buffer_line(current_position[X_AXIS], current_position[Y_AXIS], current_position[Z_AXIS], current_position[E_AXIS], max_feedrate[Z_AXIS], active_extruder);
+        st_synchronize();
+        plan_set_position(current_position[X_AXIS], current_position[Y_AXIS], current_position[Z_AXIS], current_position[E_AXIS]);
+      }
       
 #endif // else DELTA
 
@@ -1564,6 +1566,12 @@ void process_commands()
 
             apply_rotation_xyz(plan_bed_level_matrix, x_tmp, y_tmp, z_tmp);         //Apply the correction sending the probe offset
             current_position[Z_AXIS] = z_tmp - real_z + current_position[Z_AXIS];   //The difference is added to current position and sent to planner.
+            plan_set_position(current_position[X_AXIS], current_position[Y_AXIS], current_position[Z_AXIS], current_position[E_AXIS]);
+
+            // raising extruder to prevent carelessly accident.
+            current_position[Z_AXIS] = 0;
+            plan_buffer_line(current_position[X_AXIS], current_position[Y_AXIS], current_position[Z_AXIS], current_position[E_AXIS], max_feedrate[Z_AXIS], active_extruder);
+            st_synchronize();
             plan_set_position(current_position[X_AXIS], current_position[Y_AXIS], current_position[Z_AXIS], current_position[E_AXIS]);
         }
         break;
@@ -2715,10 +2723,10 @@ void process_commands()
     {
         if(code_seen('Z')) {
             zprobe_zoffset = -code_value(); 
-            SERIAL_ECHO_START;
-            SERIAL_ECHO("Z: ");
-            SERIAL_ECHOLN(zprobe_zoffset);
         }
+        SERIAL_ECHO_START;
+        SERIAL_ECHO("Z: ");
+        SERIAL_ECHOLN(zprobe_zoffset);
     }
     #endif
     #ifdef ABORT_ON_ENDSTOP_HIT_FEATURE_ENABLED
