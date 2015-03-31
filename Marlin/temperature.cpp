@@ -976,7 +976,7 @@ void bed_max_temp_error(void) {
 
 #ifdef HEATER_0_USES_MAX6675
 #define MAX6675_HEAT_INTERVAL 250
-long max6675_previous_millis = -HEAT_INTERVAL;
+long max6675_previous_millis = -MAX6675_HEAT_INTERVAL;
 int max6675_temp = 2000;
 
 int read_max6675()
